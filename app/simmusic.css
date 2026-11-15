@@ -1,0 +1,16 @@
+.cover-image.avatar { width: 30px; height: 30px; border-radius: 50%; font-size: 13px; }
+.cover-image.mini-avatar { width: 24px; height: 24px; border-radius: 50%; font-size: 11px; }
+.cover-image.profile-avatar { width: 76px; height: 76px; border-radius: 50%; font-size: 28px; }
+.cover-image.venue-card-image { display: grid; place-items: center; width: 100%; height: 172px; }
+.cover-image.song-art { width: 100%; height: 160px; }
+.cover-image.music-detail-cover { display: grid; place-items: center; width: 110px; height: 110px; border-radius: 12px; font-size: 18px; }
+.cover-image.shop-detail-thumbnail { width: 50px; height: 50px; border-radius: 8px; flex-shrink: 0; font-size: 10px; }
+.profile-editor > .image-picker { margin-bottom: 20px; }
+.header-avatar { flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .cover-image.song-art { height: 145px; }
+}
+@media (max-width: 430px) {
+  .cover-image.music-detail-cover { width: 80px; height: 80px; border-radius: 9px; font-size: 13px; }
+}

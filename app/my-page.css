@@ -1,0 +1,51 @@
+.mine-signin { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 22px; min-height: 250px; border: 1px solid var(--border); border-radius: 16px; background: #fff; color: #95aabd; }
+.mine-profile { display: flex; align-items: center; gap: 22px; padding: 26px 28px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.mine-profile .mine-avatar { flex: 0 0 76px; width: 76px; height: 76px; border-radius: 50%; font-size: 28px; }
+.mine-profile-copy { min-width: 0; flex: 1; }
+.mine-profile-copy h2 { color: #3e5369; font-size: 23px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.mine-profile-copy p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; color: #8293a3; font-size: 13px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.mine-profile > .btn { flex-shrink: 0; }
+.mine-tabs { display: flex; gap: 5px; overflow-x: auto; margin: 28px 0 25px; padding: 0 0 8px; border-bottom: 1px solid var(--border); scrollbar-width: thin; }
+.mine-tabs > button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; gap: 7px; padding: 10px 15px; border-radius: 9px; color: #8292a2; background: transparent; font-size: 13px; white-space: nowrap; }
+.mine-tabs > button:hover { background: #edf5fc; }
+.mine-tabs > button.active { color: #247ebf; background: #e8f3ff; }
+.mine-tab-count { color: inherit; font-size: 11px; opacity: .8; font-variant-numeric: tabular-nums; }
+.mine-collection-title { display: flex; align-items: center; gap: 9px; margin-bottom: 18px; color: #435368; font-size: 17px; font-weight: 600; }
+.mine-song-card, .mine-place-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.mine-song-open, .mine-venue-open { display: flex; flex: 1; flex-direction: column; width: 100%; min-width: 0; padding: 0; text-align: left; color: inherit; background: transparent; }
+.mine-song-open:hover, .mine-venue-open:hover { background: #fbfdff; }
+.mine-song-card .mine-song-cover { width: 100%; height: 160px; }
+.mine-place-card .mine-place-cover { width: 100%; height: 156px; }
+.mine-song-copy { display: block; width: 100%; padding: 18px 18px 14px; }
+.mine-song-copy > .genre-tag { margin-bottom: 9px; }
+.mine-item-title { display: block; color: #3e5369; font-size: 17px; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
+.mine-song-artist { display: block; margin-top: 5px; color: #8c99a8; font-size: 13px; overflow-wrap: anywhere; }
+.mine-song-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 18px; color: #91a0af; font-size: 12px; }
+.mine-song-meta strong { color: #5a8eb9; font-weight: 500; }
+.mine-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 18px; padding: 10px 0 12px; border-top: 1px solid #edf2f6; }
+.mine-heart { display: inline-flex; align-items: center; gap: 7px; min-width: 45px; min-height: 34px; padding: 5px 6px; border-radius: 8px; color: #98a7b7; background: transparent; font-size: 12px; font-variant-numeric: tabular-nums; }
+.mine-heart:hover { background: #fdf0f3; color: #c76880; }
+.mine-heart.active { color: #ce647d; }
+.mine-manage-actions { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+.mine-manage-actions .icon-btn { width: 32px; height: 32px; }
+.mine-place-copy { display: block; flex: 1; width: 100%; padding: 21px 22px; }
+.mine-place-copy .mine-item-title { font-size: 19px; }
+.mine-place-copy .info-list { margin-top: 16px; }
+.mine-place-actions { margin: 0 22px; padding: 12px 0 16px; flex-wrap: wrap; }
+
+@media (max-width: 600px) {
+  .mine-profile { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 14px 16px; padding: 21px; }
+  .mine-profile .mine-avatar { flex-basis: 60px; width: 60px; height: 60px; font-size: 24px; }
+  .mine-profile-copy h2 { font-size: 19px; }
+  .mine-profile > .btn { grid-column: 2; justify-self: start; margin-left: 0; }
+  .mine-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; margin: 22px 0; overflow: visible; }
+  .mine-tabs > button { justify-content: flex-start; gap: 5px; padding: 9px 11px; font-size: 12px; }
+  .mine-tabs > button > svg { width: 15px; height: 15px; }
+  .mine-song-card .mine-song-cover { height: 145px; }
+  .mine-song-copy { padding: 14px 13px; }
+  .mine-item-title { font-size: 15px; }
+  .mine-song-artist { font-size: 12px; }
+  .mine-card-actions { margin-inline: 12px; gap: 4px; }
+  .mine-manage-actions { gap: 2px; }
+  .mine-place-actions { margin-inline: 20px; }
+}

@@ -1,0 +1,88 @@
+.artist-avatar.directory-avatar {
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.artist-profile .artist-avatar.directory-avatar {
+  border-radius: 50%;
+}
+
+.shop-card.has-cover {
+  overflow: hidden;
+  padding: 0;
+}
+
+.shop-card .shop-card-cover {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 156px;
+  border-radius: 0;
+  font-size: clamp(23px, 2.8vw, 31px);
+}
+
+.shop-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 22px 24px 24px;
+}
+
+.shop-card-body .info-list {
+  margin-top: 15px;
+}
+
+.shop-card-body .shop-actions {
+  margin-top: auto;
+}
+
+.venue-cover .venue-home-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  font-size: clamp(28px, 3.5vw, 38px);
+}
+
+.artist-work .artist-work-cover {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+
+.artist-work .artist-work-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.artist-work .artist-work-price {
+  max-width: 38%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.artist-work-price > svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .shop-card .shop-card-cover {
+    height: 150px;
+    font-size: 28px;
+  }
+
+  .shop-card-body {
+    padding: 20px 22px 22px;
+  }
+
+  .artist-work .artist-work-cover {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    font-size: 9px;
+  }
+}

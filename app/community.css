@@ -1,0 +1,13 @@
+.song-card-link { display: flex; flex: 1; flex-direction: column; width: 100%; padding: 0; text-align: left; color: inherit; background: transparent; }
+.song-card-link .song-body { width: 100%; }
+.song-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 19px 15px; }
+.song-card-footer .song-owner { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.favorite-button { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 7px 9px; border-radius: 8px; background: transparent; color: #7b889a; font-size: 13px; font-variant-numeric: tabular-nums; }
+.favorite-button:hover { background: #fff0f3; color: #bc4267; }
+.favorite-button.is-favorite { color: #bc4267; background: #fff2f5; }
+.song-detail-favorite { display: flex; justify-content: flex-end; margin: -12px 0 14px; }
+.header-inner { gap: 24px; }
+.site-nav button { padding-inline: 12px; }
+@media (max-width: 1000px) { .header-inner { gap: 16px; } .site-nav button { padding-inline: 9px; } }
+@media (max-width: 760px) { .header-inner { gap: 0; } .site-nav { grid-template-columns: repeat(5,minmax(0,1fr)); } .site-nav button { padding-inline: 3px; } }
+@media (max-width: 560px) { .site-nav svg { display: none; } .song-card-footer { padding: 0 13px 12px; } }

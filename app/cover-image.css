@@ -1,0 +1,54 @@
+:where(.cover-image) {
+  display: inline-grid;
+  position: relative;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  vertical-align: middle;
+  isolation: isolate;
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+}
+
+:where(.cover-image--avatar) {
+  width: 30px;
+  height: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: 13px;
+}
+
+.cover-image > .cover-image__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.cover-image > .cover-image__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0;
+  font: inherit;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.cover-image__line {
+  display: block;
+  white-space: pre;
+  line-height: inherit;
+}
