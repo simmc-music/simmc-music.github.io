@@ -36,6 +36,13 @@
   margin-top: auto;
 }
 
+.shop-card-open { display: flex; flex: 1; flex-direction: column; width: 100%; padding: 0; color: inherit; background: transparent; text-align: left; }
+.shop-card-open:hover { background: #fafcff; }
+.shop-card-open:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; border-radius: 14px; }
+.shop-card-open .shop-card-body { width: 100%; }
+.shop-song-count { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; color: var(--primary); font-size: 13px; }
+.shop-card.has-cover > .shop-actions { margin: 0 24px 20px; }
+
 .venue-cover .venue-home-image {
   position: absolute;
   inset: 0;
@@ -78,6 +85,8 @@
   .shop-card-body {
     padding: 20px 22px 22px;
   }
+
+  .shop-card.has-cover > .shop-actions { margin-inline: 22px; }
 
   .artist-work .artist-work-cover {
     flex-basis: 42px;

@@ -1,0 +1,15 @@
+.shop-home-header { display: flex; align-items: center; gap: 28px; margin-bottom: 32px; padding: 24px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.shop-home .shop-home-cover { flex: 0 0 220px; width: 220px; height: 166px; border-radius: 10px; font-size: 27px; }
+.shop-home-info { min-width: 0; }
+.shop-home-info .page-title { margin: 0 0 18px; overflow-wrap: anywhere; }
+.shop-home-info .info-list { margin: 0; }
+@media (max-width: 600px) {
+  .shop-home-header { align-items: flex-start; gap: 18px; padding: 18px; }
+  .shop-home .shop-home-cover { flex-basis: 112px; width: 112px; height: 112px; font-size: 17px; }
+  .shop-home-info .page-title { font-size: 24px; margin-bottom: 12px; }
+  .shop-home-info .info-row { font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .shop-home-header { flex-direction: column; }
+  .shop-home .shop-home-cover { flex-basis: auto; width: 100%; height: 150px; font-size: 24px; }
+}

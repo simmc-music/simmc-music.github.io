@@ -7,7 +7,30 @@ export function comparePlayerCategory(a: string | null, b: string | null) {
   return Number(!/^[A-Za-z0-9_]+$/.test(a ?? "")) - Number(!/^[A-Za-z0-9_]+$/.test(b ?? ""));
 }
 
-export function compareSongs(a: Song, b: Song, order = "newest") {
+export function createRandomSeed() {
+  return globalThis.crypto?.getRandomValues
+    ? globalThis.crypto.getRandomValues(new Uint32Array(1))[0]
+    : Math.floor(Math.random() * 0x100000000);
+}
+
+/** One seed assigns each song a repeatable rank, independent of filtering or pages. */
+export function randomSongRank(id: string, seed: number) {
+  let hash = (2166136261 ^ seed) >>> 0;
+  for (let index = 0; index < id.length; index++) {
+    hash = Math.imul(hash ^ id.charCodeAt(index), 16777619);
+  }
+  // Avalanche the hash so nearby IDs/seeds do not produce nearby positions.
+  hash = Math.imul(hash ^ (hash >>> 16), 0x85ebca6b);
+  hash = Math.imul(hash ^ (hash >>> 13), 0xc2b2ae35);
+  return (hash ^ (hash >>> 16)) >>> 0;
+}
+
+export function compareSongs(a: Song, b: Song, order = "newest", randomSeed = 0) {
+  if (order === "random") {
+    return randomSongRank(a.id, randomSeed) - randomSongRank(b.id, randomSeed)
+      || comparePlayerCategory(a.owner, b.owner)
+      || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  }
   const primary = order === "newest"
     ? (b.createdAt ?? 0) - (a.createdAt ?? 0)
     : Number(a.customPrice) - Number(b.customPrice)

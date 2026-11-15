@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, CalendarDays, Heart, MapPin, Music2, Pencil, Store, Trash2, UserRound, Waves } from "lucide-react";
+import { songArtist } from "../lib/song-display";
 import { CoverImage } from "./cover-image";
 import { Pagination, usePagination } from "./pagination";
 import { compareSongs, compareShops, compareVenues } from "../lib/collection-order";
@@ -15,6 +16,7 @@ type MyPageProps = {
   onSong: (song: Song) => void;
   onEditSong: (song: Song) => void;
   onDeleteSong: (song: Song) => void;
+  onShop: (shop: Shop) => void;
   onEditShop: (shop: Shop) => void;
   onDeleteShop: (shop: Shop) => void;
   onVenue: (venue: Venue) => void;
@@ -27,7 +29,7 @@ type MyPageProps = {
 
 type Collection = "songs" | "favorites" | "shops" | "venues";
 
-export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteSong, onEditShop, onDeleteShop, onVenue, onEditVenue, onDeleteVenue, onFavorite, favoriteBusyId, busy = false }: MyPageProps) {
+export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteSong, onShop, onEditShop, onDeleteShop, onVenue, onEditVenue, onDeleteVenue, onFavorite, favoriteBusyId, busy = false }: MyPageProps) {
   const [collection, setCollection] = useState<Collection>("songs");
   const user = data.user;
   const ownSongs = data.songs.filter(song => samePlayer(song.owner,user?.gameId)).sort(compareSongs);
@@ -84,9 +86,9 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
           <button className="mine-song-open" onClick={() => onSong(song)} aria-label={`查看乐曲 ${song.title}`}>
             <CoverImage src={song.imageUrl} name={song.title} identity={song.id} kind="song" className="mine-song-cover" />
             <span className="mine-song-copy">
-              <span className="genre-tag">{song.genre}</span>
+              <span className="genre-tag song-kind">类型：{song.genre}</span>
               <strong className="mine-item-title">{song.title}</strong>
-              <span className="mine-song-artist">{song.artist}</span>
+              <span className="mine-song-artist">{songArtist(song)}</span>
               <span className="mine-song-meta"><span>{song.bars ? `${song.bars} 小节` : ""}</span><strong>{amount(song)}{!song.customPrice && " 云币"}</strong></span>
             </span>
           </button>
@@ -104,6 +106,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
 
       {collection === "shops" && (ownShops.length ? <div className="directory-grid mine-place-grid">
         {shopsPage.items.map(shop => <article className="mine-place-card" key={shop.id}>
+          <button className="mine-venue-open" onClick={() => onShop(shop)} aria-label={`查看商店 ${shop.name} 的乐曲`}>
           <CoverImage src={shop.imageUrl} name={shop.name} identity={shop.id} kind="shop" className="mine-place-cover" />
           <div className="mine-place-copy">
             <h3 className="mine-item-title">{shop.name}</h3>
@@ -113,6 +116,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
               {shop.port && <div className="info-row"><Waves size={16} /><span>{shop.port}</span></div>}
             </div>
           </div>
+          </button>
           {shop.canManage && <div className="mine-card-actions mine-place-actions">
             <button className="btn secondary small" onClick={() => onEditShop(shop)} aria-label={`编辑商店 ${shop.name}`}><Pencil size={15} />编辑</button>
             <button className="btn ghost danger small" onClick={() => onDeleteShop(shop)} aria-label={`删除商店 ${shop.name}`}><Trash2 size={15} />删除</button>

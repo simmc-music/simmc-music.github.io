@@ -6,6 +6,7 @@ import { amount, coords, shopCoords, samePlayer, type Artist, type Shop, type So
 import { CoverImage } from "./cover-image";
 import { Pagination, usePagination } from "./pagination";
 import { compareArtists, compareShops, compareSongs } from "../lib/collection-order";
+import { songArtist } from "../lib/song-display";
 import "./directory-images.css";
 
 type ArtistDirectoryProps = {
@@ -48,19 +49,23 @@ export function ArtistDirectory({ artists, onSelectArtist }: ArtistDirectoryProp
 
 type ShopDirectoryProps = {
   shops: Shop[];
+  songs: Song[];
   user: User | null;
+  onSelectShop: (shop: Shop) => void;
   onCreate: () => void;
   onEdit: (shop: Shop) => void;
   onDelete: (shop: Shop) => void;
 };
 
-export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopDirectoryProps) {
+export function ShopDirectory({ shops, songs, user, onSelectShop, onCreate, onEdit, onDelete }: ShopDirectoryProps) {
   const [query, setQuery] = useState("");
   const keyword = query.trim().toLocaleLowerCase();
   const filtered = shops.filter((shop) =>
     `${shop.name} ${shop.port}`.toLocaleLowerCase().includes(keyword),
   ).sort(compareShops);
   const pagination = usePagination(filtered, keyword);
+  const songCounts = new Map<string, number>();
+  for (const song of songs) for (const shopId of song.shopIds) songCounts.set(shopId, (songCounts.get(shopId) ?? 0) + 1);
 
   return <>
     <div className="page-heading directory-heading">
@@ -77,6 +82,7 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
     <div ref={pagination.anchorRef} className="pagination-anchor" />
     {filtered.length ? <div className="directory-grid">
       {pagination.items.map((shop) => <article className="shop-card has-cover" key={shop.id}>
+        <button type="button" className="shop-card-open" onClick={() => onSelectShop(shop)} aria-label={`查看商店 ${shop.name} 的乐曲`}>
         <CoverImage src={shop.imageUrl} name={shop.name} identity={shop.id} kind="shop" className="shop-card-cover" />
         <div className="shop-card-body">
         <h3>{shop.name}</h3>
@@ -85,11 +91,13 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
           {shop.port && <div className="info-row"><Waves size={17} /><span>{shop.port}</span></div>}
           {shop.owner && <div className="info-row"><UserRound size={17} /><span>所有者：{shop.owner}</span></div>}
         </div>
+        <span className="shop-song-count">{songCounts.get(shop.id) ?? 0} 首乐曲<ArrowRight size={16} /></span>
+        </div>
+        </button>
         {user && shop.canManage && <div className="shop-actions">
           <button className="btn secondary small" onClick={() => onEdit(shop)} aria-label={`编辑商店 ${shop.name}`}><Pencil size={15} />编辑</button>
           <button className="btn ghost danger small" onClick={() => onDelete(shop)} aria-label={`删除商店 ${shop.name}`}><Trash2 size={15} />删除</button>
         </div>}
-        </div>
       </article>)}
     </div> : <div className="empty-state">{keyword ? "未找到商店" : "暂无商店"}</div>}
     <Pagination {...pagination} label="商店分页" />
@@ -117,7 +125,7 @@ export function ArtistDetail({ artist, songs, onSong }: ArtistDetailProps) {
     <div className="artist-works">
       {pagination.items.map((song) => <button key={song.id} onClick={() => onSong(song)} className="artist-work">
         <CoverImage src={song.imageUrl} name={song.title} identity={song.id} kind="song" className="artist-work-cover" />
-        <span className="artist-work-copy"><strong>{song.title}</strong><small>{song.artist} · {song.genre}{song.bars ? ` · ${song.bars} 小节` : ""}</small></span>
+        <span className="artist-work-copy"><strong>{song.title}</strong><small>{songArtist(song)} · 类型：{song.genre}{song.bars ? ` · ${song.bars} 小节` : ""}</small></span>
         <span className="artist-work-price">{amount(song)}{!song.customPrice && " 云币"}<ArrowRight size={16} /></span>
       </button>)}
       {!works.length && <div className="empty-state compact">暂无作品</div>}

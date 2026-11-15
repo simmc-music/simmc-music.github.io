@@ -20,3 +20,15 @@
 .instrument-choice input { margin: 0; accent-color: var(--primary); }
 .contact-text { white-space: pre-line; overflow-wrap: anywhere; }
 .mine-place-owner { margin: 0 0 9px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+
+.song-kind { color: #496f96; background: #edf4fc; }
+.shop-detail-link { width: 100%; text-align: left; cursor: pointer; }
+.shop-detail-link:hover { border-color: #bfd2e7; background: #f2f7fc; }
+.shop-detail-link > div { flex: 1; }
+.shop-detail-link:focus-visible { outline: 2px solid #4285f4; outline-offset: 3px; }
+
+.filter-group { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .filter-group .select { flex: 1 1 calc((100% - 9px) / 2); }
+  .filter-group > .btn { margin-left: auto; }
+}
