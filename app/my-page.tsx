@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, CalendarDays, Heart, MapPin, Music2, Pencil, Store, Trash2, UserRound, Waves } from "lucide-react";
 import { CoverImage } from "./cover-image";
-import { amount, coords, type Data, type Shop, type Song, type Venue } from "./ui";
+import { amount, coords, shopCoords, samePlayer, type Data, type Shop, type Song, type Venue } from "./ui";
 import "./my-page.css";
 
 type MyPageProps = {
@@ -37,10 +37,10 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
     </div>
   </section>;
 
-  const ownSongs = data.songs.filter(song => song.owner === user.gameId);
+  const ownSongs = data.songs.filter(song => samePlayer(song.owner,user.gameId));
   const favorites = data.songs.filter(song => song.isFavorited);
-  const ownShops = data.shops.filter(shop => shop.ownerId === user.id);
-  const ownVenues = data.livehouses.filter(venue => venue.owner === user.gameId);
+  const ownShops = data.shops.filter(shop => shop.ownerId === user.id || shop.creatorId === user.id);
+  const ownVenues = data.livehouses.filter(venue => samePlayer(venue.owner,user.gameId));
   const tabs = [
     { id: "songs" as const, label: "我的音乐", count: ownSongs.length, icon: Music2 },
     { id: "favorites" as const, label: "红心收藏", count: favorites.length, icon: Heart },
@@ -57,6 +57,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
       <div className="mine-profile-copy">
         <h2>{user.gameId}</h2>
         <p>{user.bio || "暂无简介"}</p>
+        {user.contact && <p className="contact-text">{user.contact}</p>}
       </div>
       <button className="btn secondary" onClick={onProfile}><Pencil size={15} />个人主页</button>
     </div>
@@ -97,8 +98,9 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
           <CoverImage src={shop.imageUrl} name={shop.name} identity={shop.id} kind="shop" className="mine-place-cover" />
           <div className="mine-place-copy">
             <h3 className="mine-item-title">{shop.name}</h3>
+            {shop.owner && <p className="mine-place-owner">所有者：{shop.owner}</p>}
             <div className="info-list">
-              <div className="info-row"><MapPin size={16} /><span>{coords(shop)}</span></div>
+              <div className="info-row"><MapPin size={16} /><span>{shopCoords(shop)}</span></div>
               {shop.port && <div className="info-row"><Waves size={16} /><span>{shop.port}</span></div>}
             </div>
           </div>

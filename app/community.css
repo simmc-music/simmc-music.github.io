@@ -11,3 +11,12 @@
 @media (max-width: 1000px) { .header-inner { gap: 16px; } .site-nav button { padding-inline: 9px; } }
 @media (max-width: 760px) { .header-inner { gap: 0; } .site-nav { grid-template-columns: repeat(5,minmax(0,1fr)); } .site-nav button { padding-inline: 3px; } }
 @media (max-width: 560px) { .site-nav svg { display: none; } .song-card-footer { padding: 0 13px 12px; } }
+
+.song-instruments, .sale-coordinates { min-width: 0; border: 0; padding: 0; margin: 18px 0; }
+.song-instruments legend, .sale-coordinates legend { margin-bottom: 9px; }
+.instrument-options, .instrument-summary { display: flex; flex-wrap: wrap; gap: 8px; }
+.instrument-choice { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; cursor: pointer; }
+.instrument-choice:has(input:checked) { border-color: #a8ccec; background: var(--primary-soft); color: #236ca6; }
+.instrument-choice input { margin: 0; accent-color: var(--primary); }
+.contact-text { white-space: pre-line; overflow-wrap: anywhere; }
+.mine-place-owner { margin: 0 0 9px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }

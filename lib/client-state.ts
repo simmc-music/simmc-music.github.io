@@ -1,3 +1,4 @@
+const samePlayer=(a:string|null|undefined,b:string|null|undefined)=>!!a&&!!b&&a.trim().toLowerCase()===b.trim().toLowerCase();
 import type { Artist, Data, Shop, Show, Song, User, Venue } from "../app/ui";
 
 function upsert<T extends { id: string }>(items: T[], item: T, prepend = false): T[] {
@@ -8,14 +9,14 @@ function upsert<T extends { id: string }>(items: T[], item: T, prepend = false):
 
 function recountArtists(data: Data): Data {
   const counts = new Map<string, number>();
-  for (const song of data.songs) counts.set(song.owner, (counts.get(song.owner) || 0) + 1);
+  for (const song of data.songs) counts.set(song.owner.toLowerCase(), (counts.get(song.owner.toLowerCase()) || 0) + 1);
   const artists: Artist[] = data.artists.flatMap(artist => {
-    const songCount = counts.get(artist.gameId) || 0;
-    return songCount ? [{ ...artist, songCount, ...(artist.id === data.user?.id ? {bio:data.user.bio,avatarUrl:data.user.avatarUrl} : {}) }] : [];
+    const songCount = counts.get(artist.gameId.toLowerCase()) || 0;
+    return songCount ? [{ ...artist, songCount, ...(artist.id === data.user?.id ? {bio:data.user.bio,avatarUrl:data.user.avatarUrl,contact:data.user.contact,registered:true} : {}) }] : [];
   });
   const user = data.user;
-  if (user && counts.has(user.gameId) && !artists.some(artist => artist.id === user.id)) {
-    artists.push({ id: user.id, gameId: user.gameId, bio: user.bio, avatarUrl:user.avatarUrl, songCount: counts.get(user.gameId)! });
+  if (user && counts.has(user.gameId.toLowerCase()) && !artists.some(artist => artist.id === user.id)) {
+    artists.push({ id: user.id, gameId: user.gameId, bio: user.bio, avatarUrl:user.avatarUrl, contact:user.contact, registered:true, songCount: counts.get(user.gameId.toLowerCase())! });
   }
   artists.sort((a, b) => b.songCount - a.songCount || a.gameId.toLowerCase().localeCompare(b.gameId.toLowerCase()));
   return { ...data, artists };
@@ -29,9 +30,9 @@ export function applyConfirmedMutation(data: Data, path: string, method: string,
     const user = response.user as User | null;
     // Ownership of a previous player's events is not exposed in state. Hide unproven
     // permissions until the authoritative refresh rather than reusing the old session's.
-    const ownedVenues = new Set(data.livehouses.filter(venue => venue.owner === user?.gameId).map(venue => venue.id));
-    return { ...data, user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||song.owner===user.gameId)})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || ownedVenues.has(event.livehouseId)) })),
-      shops: data.shops.map(shop => ({ ...shop, canManage: !!user && (user.role === "admin" || shop.ownerId === user.id) })) };
+    const ownedVenues = new Set(data.livehouses.filter(venue => samePlayer(venue.owner,user?.gameId)).map(venue => venue.id));
+    return { ...data, user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||samePlayer(song.owner,user.gameId))})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || ownedVenues.has(event.livehouseId)) })),
+      shops: data.shops.map(shop => ({ ...shop, canManage: !!user && (user.role === "admin" || shop.ownerId === user.id || shop.creatorId === user.id) })) };
   }
   if (kind === "profile") return recountArtists({ ...data, user: response.user as User });
   if (kind === "genres") return { ...data, genres: [...new Set([...data.genres, String(response.name)])] };

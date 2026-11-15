@@ -8,6 +8,7 @@ import { ImagePicker } from "./image-picker";
 type ShopDialogProps = {
   shop: Shop | null;
   name: string;
+  currentGameId: string;
   fromSong: boolean;
   dialogRef: RefObject<HTMLElement | null>;
   busy: boolean;
@@ -16,7 +17,7 @@ type ShopDialogProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>, image?: string | null) => void;
 };
 
-export function ShopDialog({ shop, name, fromSong, dialogRef, busy, error, onClose, onSubmit }: ShopDialogProps) {
+export function ShopDialog({ shop, name, currentGameId, fromSong, dialogRef, busy, error, onClose, onSubmit }: ShopDialogProps) {
   const [image, setImage] = useState<string | null>(shop?.imageUrl ?? null);
   const [imageDirty, setImageDirty] = useState(false);
   const [imageProcessing, setImageProcessing] = useState(false);
@@ -40,9 +41,12 @@ export function ShopDialog({ shop, name, fromSong, dialogRef, busy, error, onClo
           <Field label="商店名称">
             <input className="input" name="name" required maxLength={80} defaultValue={shop?.name || name} placeholder="商店名称" disabled={busy} />
           </Field>
+          <Field label="所有者游戏 ID">
+            <input className="input" name="ownerGameId" required maxLength={40} defaultValue={shop?.owner || currentGameId} placeholder="游戏 ID" disabled={busy} />
+          </Field>
           <div className="form-grid coordinate-fields">
             {(["x", "y", "z"] as const).map(key => <Field label={`${key.toUpperCase()} 坐标`} key={key}>
-              <input className="input" name={key} type="number" step="1" required min="-30000000" max="30000000" defaultValue={shop?.[key]} placeholder={key.toUpperCase()} disabled={busy} />
+              <input className="input" name={key} type="number" step="1" required min="-30000000" max="30000000" defaultValue={shop?.coordinatesKnown===false ? undefined : shop?.[key]} placeholder={key.toUpperCase()} disabled={busy} />
             </Field>)}
           </div>
           <Field label="附近港口（可选）">

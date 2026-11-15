@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarDays, Camera, ChevronLeft, ChevronRight, Clock3, MapPin, Plus, Trash2, UserRound, Waves } from "lucide-react";
-import { coords, dateKey, today, todayKey, type Show, type User, type Venue } from "./ui";
+import { coords, samePlayer, dateKey, today, todayKey, type Show, type User, type Venue } from "./ui";
 import { CoverImage } from "./cover-image";
 import "./directory-images.css";
 
@@ -20,7 +20,7 @@ type VenueHomeProps = {
 };
 
 export function VenueHome({ venue, events, user, selectedDate, month, onDateChange, onMonthChange, onAddEvent, onDeleteVenue, onDeleteEvent, onEditImage }: VenueHomeProps) {
-  const canManage = !!user && (user.role === "admin" || user.gameId === venue.owner);
+  const canManage = !!user && (user.role === "admin" || samePlayer(user.gameId,venue.owner));
   const venueEvents = events.filter((event) => event.livehouseId === venue.id);
   const dailyEvents = venueEvents.filter((event) => event.date === selectedDate).sort((a, b) => a.hour - b.hour || Number(a.id) - Number(b.id));
   const dayCounts = new Map<string, number>();

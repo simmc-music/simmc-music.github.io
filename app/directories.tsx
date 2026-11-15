@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, MapPin, Pencil, Plus, Search, Trash2, UserRound, Waves, X } from "lucide-react";
-import { amount, coords, type Artist, type Shop, type Song, type User } from "./ui";
+import { amount, coords, shopCoords, samePlayer, type Artist, type Shop, type Song, type User } from "./ui";
 import { CoverImage } from "./cover-image";
 import "./directory-images.css";
 
@@ -74,9 +74,9 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
         <div className="shop-card-body">
         <h3>{shop.name}</h3>
         <div className="info-list">
-          <div className="info-row"><MapPin size={17} /><span>{coords(shop)}</span></div>
+          <div className="info-row"><MapPin size={17} /><span>{shopCoords(shop)}</span></div>
           {shop.port && <div className="info-row"><Waves size={17} /><span>{shop.port}</span></div>}
-          {shop.owner && <div className="info-row"><UserRound size={17} /><span>创建者：{shop.owner}</span></div>}
+          {shop.owner && <div className="info-row"><UserRound size={17} /><span>所有者：{shop.owner}</span></div>}
         </div>
         {user && shop.canManage && <div className="shop-actions">
           <button className="btn secondary small" onClick={() => onEdit(shop)} aria-label={`编辑商店 ${shop.name}`}><Pencil size={15} />编辑</button>
@@ -95,17 +95,19 @@ type ArtistDetailProps = {
 };
 
 export function ArtistDetail({ artist, songs, onSong }: ArtistDetailProps) {
-  const works = songs.filter((song) => song.owner === artist.gameId);
+  const works = songs.filter((song) => samePlayer(song.owner,artist.gameId));
   return <>
     <div className="artist-profile">
       <CoverImage src={artist.avatarUrl} name={artist.gameId} identity={artist.gameId} kind="avatar" className="artist-avatar directory-avatar" />
       <div><h3>{artist.gameId}</h3><span className="artist-count">{artist.songCount} 首作品</span></div>
     </div>
+    {artist.registered === false && <span className="genre-tag">未注册</span>}
     <p className="artist-bio artist-full-bio">{artist.bio || "暂无简介"}</p>
+    {artist.contact && <div className="description-block"><h4>联系方式</h4><p className="contact-text">{artist.contact}</p></div>}
     <div className="artist-works">
       {works.map((song) => <button key={song.id} onClick={() => onSong(song)} className="artist-work">
         <CoverImage src={song.imageUrl} name={song.title} identity={song.id} kind="song" className="artist-work-cover" />
-        <span className="artist-work-copy"><strong>{song.title}</strong><small>{song.artist} · {song.genre} · {song.bars} 小节</small></span>
+        <span className="artist-work-copy"><strong>{song.title}</strong><small>{song.artist} · {song.genre}{song.bars ? ` · ${song.bars} 小节` : ""}</small></span>
         <span className="artist-work-price">{amount(song)}{!song.customPrice && " 云币"}<ArrowRight size={16} /></span>
       </button>)}
       {!works.length && <div className="empty-state compact">暂无作品</div>}
