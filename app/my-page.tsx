@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ArrowRight, CalendarDays, Heart, MapPin, Music2, Pencil, Store, Trash2, UserRound, Waves } from "lucide-react";
 import { CoverImage } from "./cover-image";
+import { Pagination, usePagination } from "./pagination";
+import { compareSongs, compareShops, compareVenues } from "../lib/collection-order";
 import { amount, coords, shopCoords, samePlayer, type Data, type Shop, type Song, type Venue } from "./ui";
 import "./my-page.css";
 
@@ -28,6 +30,16 @@ type Collection = "songs" | "favorites" | "shops" | "venues";
 export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteSong, onEditShop, onDeleteShop, onVenue, onEditVenue, onDeleteVenue, onFavorite, favoriteBusyId, busy = false }: MyPageProps) {
   const [collection, setCollection] = useState<Collection>("songs");
   const user = data.user;
+  const ownSongs = data.songs.filter(song => samePlayer(song.owner,user?.gameId)).sort(compareSongs);
+  const favorites = data.songs.filter(song => song.isFavorited).sort(compareSongs);
+  const ownShops = data.shops.filter(shop => !!user && (shop.ownerId === user.id || shop.creatorId === user.id)).sort(compareShops);
+  const ownVenues = data.livehouses.filter(venue => samePlayer(venue.owner,user?.gameId)).sort(compareVenues);
+  const songsPage = usePagination(ownSongs, user?.id ?? "");
+  const favoritesPage = usePagination(favorites, user?.id ?? "");
+  const shopsPage = usePagination(ownShops, user?.id ?? "");
+  const venuesPage = usePagination(ownVenues, user?.id ?? "");
+  const pagination = collection === "songs" ? songsPage : collection === "favorites" ? favoritesPage : collection === "shops" ? shopsPage : venuesPage;
+
 
   if (!user) return <section className="my-page">
     <div className="page-heading"><h1 className="page-title">我的</h1></div>
@@ -37,10 +49,6 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
     </div>
   </section>;
 
-  const ownSongs = data.songs.filter(song => samePlayer(song.owner,user.gameId));
-  const favorites = data.songs.filter(song => song.isFavorited);
-  const ownShops = data.shops.filter(shop => shop.ownerId === user.id || shop.creatorId === user.id);
-  const ownVenues = data.livehouses.filter(venue => samePlayer(venue.owner,user.gameId));
   const tabs = [
     { id: "songs" as const, label: "我的音乐", count: ownSongs.length, icon: Music2 },
     { id: "favorites" as const, label: "红心收藏", count: favorites.length, icon: Heart },
@@ -48,7 +56,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
     { id: "venues" as const, label: "我的 Livehouse", count: ownVenues.length, icon: CalendarDays },
   ];
   const selected = tabs.find(tab => tab.id === collection)!;
-  const songs = collection === "favorites" ? favorites : ownSongs;
+  const songs = collection === "favorites" ? favoritesPage.items : songsPage.items;
 
   return <section className="my-page">
     <div className="page-heading"><h1 className="page-title">我的</h1></div>
@@ -69,6 +77,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
     </nav>
 
     <section className="mine-collection" aria-label={selected.label}>
+      <div ref={pagination.anchorRef} className="pagination-anchor" />
       <h2 className="mine-collection-title">{selected.label}<span className="chip">{selected.count}</span></h2>
       {(collection === "songs" || collection === "favorites") && (songs.length ? <div className="song-grid mine-song-grid">
         {songs.map(song => <article className="mine-song-card" key={song.id}>
@@ -94,7 +103,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
       </div> : <div className="empty-state">{collection === "favorites" ? "暂无收藏" : "暂无乐曲"}</div>)}
 
       {collection === "shops" && (ownShops.length ? <div className="directory-grid mine-place-grid">
-        {ownShops.map(shop => <article className="mine-place-card" key={shop.id}>
+        {shopsPage.items.map(shop => <article className="mine-place-card" key={shop.id}>
           <CoverImage src={shop.imageUrl} name={shop.name} identity={shop.id} kind="shop" className="mine-place-cover" />
           <div className="mine-place-copy">
             <h3 className="mine-item-title">{shop.name}</h3>
@@ -112,7 +121,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
       </div> : <div className="empty-state">暂无商店</div>)}
 
       {collection === "venues" && (ownVenues.length ? <div className="directory-grid mine-place-grid">
-        {ownVenues.map(venue => <article className="mine-place-card" key={venue.id}>
+        {venuesPage.items.map(venue => <article className="mine-place-card" key={venue.id}>
           <button className="mine-venue-open" onClick={() => onVenue(venue)} aria-label={`查看 ${venue.name} 主页`}>
             <CoverImage src={venue.imageUrl} name={venue.name} identity={venue.id} kind="venue" className="mine-place-cover" />
             <span className="mine-place-copy">
@@ -132,6 +141,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
           </div>
         </article>)}
       </div> : <div className="empty-state">暂无 Livehouse</div>)}
+      <Pagination {...pagination} label={`${selected.label}分页`} />
     </section>
   </section>;
 }

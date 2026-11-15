@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ArrowRight, MapPin, Pencil, Plus, Search, Trash2, UserRound, Waves, X } from "lucide-react";
 import { amount, coords, shopCoords, samePlayer, type Artist, type Shop, type Song, type User } from "./ui";
 import { CoverImage } from "./cover-image";
+import { Pagination, usePagination } from "./pagination";
+import { compareArtists, compareShops, compareSongs } from "../lib/collection-order";
 import "./directory-images.css";
 
 type ArtistDirectoryProps = {
@@ -17,7 +19,8 @@ export function ArtistDirectory({ artists, onSelectArtist }: ArtistDirectoryProp
   const keyword = query.trim().toLocaleLowerCase();
   const filtered = artists.filter((artist) =>
     `${artist.gameId} ${artist.bio}`.toLocaleLowerCase().includes(keyword),
-  );
+  ).sort(compareArtists);
+  const pagination = usePagination(filtered, keyword);
 
   return <>
     <div className="page-heading directory-heading">
@@ -30,14 +33,16 @@ export function ArtistDirectory({ artists, onSelectArtist }: ArtistDirectoryProp
         {query && <button type="button" aria-label="清空艺术家搜索" onClick={() => setQuery("")}><X size={15} /></button>}
       </div>
     </div>
+    <div ref={pagination.anchorRef} className="pagination-anchor" />
     {filtered.length ? <div className="directory-grid">
-      {filtered.map((artist) => <button className="artist-card" key={artist.id} onClick={() => onSelectArtist(artist)} aria-label={`查看艺术家 ${artist.gameId}`}>
+      {pagination.items.map((artist) => <button className="artist-card" key={artist.id} onClick={() => onSelectArtist(artist)} aria-label={`查看艺术家 ${artist.gameId}`}>
         <CoverImage src={artist.avatarUrl} name={artist.gameId} identity={artist.gameId} kind="avatar" className="artist-avatar directory-avatar" />
         <h3>{artist.gameId}</h3>
         <span className="artist-count">{artist.songCount} 首作品</span>
         <p className="artist-bio">{artist.bio || "暂无简介"}</p>
       </button>)}
     </div> : <div className="empty-state">{keyword ? "未找到艺术家" : "暂无艺术家"}</div>}
+    <Pagination {...pagination} label="艺术家分页" />
   </>;
 }
 
@@ -54,7 +59,8 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
   const keyword = query.trim().toLocaleLowerCase();
   const filtered = shops.filter((shop) =>
     `${shop.name} ${shop.port}`.toLocaleLowerCase().includes(keyword),
-  );
+  ).sort(compareShops);
+  const pagination = usePagination(filtered, keyword);
 
   return <>
     <div className="page-heading directory-heading">
@@ -68,8 +74,9 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
         {query && <button type="button" aria-label="清空商店搜索" onClick={() => setQuery("")}><X size={15} /></button>}
       </div>
     </div>
+    <div ref={pagination.anchorRef} className="pagination-anchor" />
     {filtered.length ? <div className="directory-grid">
-      {filtered.map((shop) => <article className="shop-card has-cover" key={shop.id}>
+      {pagination.items.map((shop) => <article className="shop-card has-cover" key={shop.id}>
         <CoverImage src={shop.imageUrl} name={shop.name} identity={shop.id} kind="shop" className="shop-card-cover" />
         <div className="shop-card-body">
         <h3>{shop.name}</h3>
@@ -85,6 +92,7 @@ export function ShopDirectory({ shops, user, onCreate, onEdit, onDelete }: ShopD
         </div>
       </article>)}
     </div> : <div className="empty-state">{keyword ? "未找到商店" : "暂无商店"}</div>}
+    <Pagination {...pagination} label="商店分页" />
   </>;
 }
 
@@ -95,7 +103,8 @@ type ArtistDetailProps = {
 };
 
 export function ArtistDetail({ artist, songs, onSong }: ArtistDetailProps) {
-  const works = songs.filter((song) => samePlayer(song.owner,artist.gameId));
+  const works = songs.filter((song) => samePlayer(song.owner,artist.gameId)).sort(compareSongs);
+  const pagination = usePagination(works, artist.id);
   return <>
     <div className="artist-profile">
       <CoverImage src={artist.avatarUrl} name={artist.gameId} identity={artist.gameId} kind="avatar" className="artist-avatar directory-avatar" />
@@ -104,13 +113,15 @@ export function ArtistDetail({ artist, songs, onSong }: ArtistDetailProps) {
     {artist.registered === false && <span className="genre-tag">未注册</span>}
     <p className="artist-bio artist-full-bio">{artist.bio || "暂无简介"}</p>
     {artist.contact && <div className="description-block"><h4>联系方式</h4><p className="contact-text">{artist.contact}</p></div>}
+    <div ref={pagination.anchorRef} className="pagination-anchor" />
     <div className="artist-works">
-      {works.map((song) => <button key={song.id} onClick={() => onSong(song)} className="artist-work">
+      {pagination.items.map((song) => <button key={song.id} onClick={() => onSong(song)} className="artist-work">
         <CoverImage src={song.imageUrl} name={song.title} identity={song.id} kind="song" className="artist-work-cover" />
         <span className="artist-work-copy"><strong>{song.title}</strong><small>{song.artist} · {song.genre}{song.bars ? ` · ${song.bars} 小节` : ""}</small></span>
         <span className="artist-work-price">{amount(song)}{!song.customPrice && " 云币"}<ArrowRight size={16} /></span>
       </button>)}
       {!works.length && <div className="empty-state compact">暂无作品</div>}
     </div>
+    <Pagination {...pagination} label="艺术家作品分页" />
   </>;
 }

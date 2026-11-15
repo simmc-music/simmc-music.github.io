@@ -3,6 +3,7 @@
 import { CalendarDays, Camera, ChevronLeft, ChevronRight, Clock3, MapPin, Plus, Trash2, UserRound, Waves } from "lucide-react";
 import { coords, samePlayer, dateKey, today, todayKey, type Show, type User, type Venue } from "./ui";
 import { CoverImage } from "./cover-image";
+import { Pagination, usePagination } from "./pagination";
 import "./directory-images.css";
 
 type VenueHomeProps = {
@@ -23,6 +24,7 @@ export function VenueHome({ venue, events, user, selectedDate, month, onDateChan
   const canManage = !!user && (user.role === "admin" || samePlayer(user.gameId,venue.owner));
   const venueEvents = events.filter((event) => event.livehouseId === venue.id);
   const dailyEvents = venueEvents.filter((event) => event.date === selectedDate).sort((a, b) => a.hour - b.hour || Number(a.id) - Number(b.id));
+  const pagination = usePagination(dailyEvents, `${venue.id}:${selectedDate}`);
   const dayCounts = new Map<string, number>();
   for (const event of venueEvents) dayCounts.set(event.date, (dayCounts.get(event.date) || 0) + 1);
   const firstWeekday = (new Date(month.getFullYear(), month.getMonth(), 1).getDay() + 6) % 7;
@@ -76,11 +78,13 @@ export function VenueHome({ venue, events, user, selectedDate, month, onDateChan
     </div>
 
     <section className="agenda-panel" aria-labelledby="venue-agenda-title">
+      <div ref={pagination.anchorRef} className="pagination-anchor" />
       <div className="agenda-heading"><div><h2 className="section-title" id="venue-agenda-title">演出排班</h2><p className="agenda-date"><CalendarDays size={14} />{dateLabel}<span>·</span>{dailyEvents.length} 个节目</p></div><button className="btn primary" onClick={onAddEvent}><Plus size={17} />添加演出</button></div>
-      {!dailyEvents.length ? <div className="agenda-empty"><CalendarDays size={26} strokeWidth={1.3} /><span>暂无演出</span></div> : Array.from(new Set(dailyEvents.map((event) => event.hour))).map((hour) => <div className="time-group" key={hour}>
+      {!dailyEvents.length ? <div className="agenda-empty"><CalendarDays size={26} strokeWidth={1.3} /><span>暂无演出</span></div> : Array.from(new Set(pagination.items.map((event) => event.hour))).map((hour) => <div className="time-group" key={hour}>
         <div className="time-label"><Clock3 size={16} /><strong>{String(hour).padStart(2, "0")}:00</strong></div>
-        {dailyEvents.filter((event) => event.hour === hour).map((show, index) => <article className="event-card" key={show.id}><span className="event-order">{String(index + 1).padStart(2, "0")}</span><div><h3 className="event-title">{show.title}</h3><span className="event-player"><UserRound size={14} />{show.playerId}</span></div>{show.canDelete && <button className="icon-btn danger event-actions" aria-label={`删除节目 ${show.title}`} onClick={() => onDeleteEvent(show)}><Trash2 size={16} /></button>}</article>)}
+        {pagination.items.filter((event) => event.hour === hour).map((show) => <article className="event-card" key={show.id}><span className="event-order">{String(dailyEvents.filter(event => event.hour === hour).findIndex(event => event.id === show.id) + 1).padStart(2, "0")}</span><div><h3 className="event-title">{show.title}</h3><span className="event-player"><UserRound size={14} />{show.playerId}</span></div>{show.canDelete && <button className="icon-btn danger event-actions" aria-label={`删除节目 ${show.title}`} onClick={() => onDeleteEvent(show)}><Trash2 size={16} /></button>}</article>)}
       </div>)}
+      <Pagination {...pagination} label="演出排班分页" />
     </section>
   </div>;
 }

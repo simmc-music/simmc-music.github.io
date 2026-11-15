@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 export type User={id:string;gameId:string;role:"admin"|"user";bio:string;avatarUrl:string|null;contact?:string};
 export type Artist={id:string;gameId:string;bio:string;songCount:number;avatarUrl:string|null;contact?:string;registered?:boolean};
-export type Venue={id:string;name:string;x:number;y:number;z:number;port:string;owner:string;protected:boolean;imageUrl:string|null};
+export type Venue={createdAt?:number;id:string;name:string;x:number;y:number;z:number;port:string;owner:string;protected:boolean;imageUrl:string|null};
 export type Show={id:string;livehouseId:string;date:string;hour:number;playerId:string;title:string;createdAt:string;canDelete:boolean};
 export type Shop={id:string;name:string;x:number;y:number;z:number;port:string;ownerId:string|null;creatorId?:string|null;owner:string|null;canManage:boolean;coordinatesKnown?:boolean;imageUrl:string|null};
-export type Song={id:string;title:string;artist:string;price:number|null;customPrice:boolean;bars:number;genre:string;description:string;owner:string;shopIds:string[];imageUrl:string|null;favoriteCount:number;isFavorited:boolean;canEdit:boolean;instruments?:string[];saleCoordinates?:{x:number;y:number;z:number}|null};
+export type Song={createdAt?:number;id:string;title:string;artist:string;price:number|null;customPrice:boolean;bars:number;genre:string;description:string;owner:string;shopIds:string[];imageUrl:string|null;favoriteCount:number;isFavorited:boolean;canEdit:boolean;instruments?:string[];saleCoordinates?:{x:number;y:number;z:number}|null};
 export type Data={user:User|null;livehouses:Venue[];events:Show[];songs:Song[];shops:Shop[];genres:string[];artists:Artist[];instruments?:string[]};
 export const samePlayer=(a:string|null|undefined,b:string|null|undefined)=>!!a&&!!b&&a.trim().toLowerCase()===b.trim().toLowerCase();
 export const shopCoords=(shop:Shop)=>shop.coordinatesKnown===false?"坐标待补充":coords(shop);

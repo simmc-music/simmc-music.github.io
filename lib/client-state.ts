@@ -31,7 +31,7 @@ export function applyConfirmedMutation(data: Data, path: string, method: string,
     // Ownership of a previous player's events is not exposed in state. Hide unproven
     // permissions until the authoritative refresh rather than reusing the old session's.
     const ownedVenues = new Set(data.livehouses.filter(venue => samePlayer(venue.owner,user?.gameId)).map(venue => venue.id));
-    return { ...data, user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||samePlayer(song.owner,user.gameId))})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || ownedVenues.has(event.livehouseId)) })),
+    return { ...data, user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||samePlayer(song.owner,user.gameId))})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || samePlayer(user.gameId,event.playerId) || ownedVenues.has(event.livehouseId)) })),
       shops: data.shops.map(shop => ({ ...shop, canManage: !!user && (user.role === "admin" || shop.ownerId === user.id || shop.creatorId === user.id) })) };
   }
   if (kind === "profile") return recountArtists({ ...data, user: response.user as User });
