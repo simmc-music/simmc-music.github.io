@@ -1,0 +1,17 @@
+.band-members-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.band-members-count { color: #91a2b1; font-size: 12px; font-variant-numeric: tabular-nums; }
+.band-member-editor { min-width: 0; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; transition: border-color .15s, box-shadow .15s; }
+.band-member-editor:focus-within { border-color: #8abde9; box-shadow: 0 0 0 3px #edf7ff; }
+.band-member-editor.is-disabled { background: #f7f9fb; }
+.band-member-editor.has-error { border-color: #dba3a3; }
+.band-member-tags { display: flex; flex-wrap: wrap; gap: 7px; max-height: 180px; overflow-y: auto; list-style: none; padding: 0 0 10px; margin: 0; }
+.band-member-tags li { display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; padding: 4px 5px 4px 10px; border-radius: 8px; background: #edf5fc; color: #52758f; font-size: 13px; line-height: 1.6; }
+.band-member-tags li > span { min-width: 0; overflow-wrap: anywhere; }
+.band-member-tags button { display: grid; place-items: center; flex-shrink: 0; width: 27px; height: 27px; border-radius: 6px; color: #7690a5; background: transparent; }
+.band-member-tags button:hover:not(:disabled) { color: #a14f57; background: #fbe9ec; }
+.band-member-tags button:focus-visible { outline: 2px solid #8abde9; outline-offset: 1px; }
+.band-member-input-row { display: flex; align-items: center; gap: 8px; }
+.band-member-draft { flex: 1; min-width: 0; width: 100%; min-height: 36px; padding: 5px 2px; border: 0; border-radius: 0; outline: 0; background: transparent; color: #4f687e; font: inherit; font-size: 13px; box-shadow: none; }
+.band-member-draft::placeholder { color: #a3b0bd; }
+.band-member-input-row .btn { flex-shrink: 0; min-height: 36px; padding: 7px 10px; }
+.band-members-error { color: #b45460; font-size: 12px; line-height: 1.6; }

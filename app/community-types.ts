@@ -6,11 +6,13 @@ export type Band = {
 export type Activity = {
   id: string; name: string; date: string; description: string; location: string;
   ownerId: string; ownerName: string; livehouseId: string | null;
+  imageUrl?: string | null;
   canManage: boolean; createdAt: number; signupCount: number;
 };
 export type ActivitySignup = {
   id: string; activityId: string; kind: "individual" | "band";
   playerId: string; bandId: string | null; displayName: string;
+  programName?: string;
   createdAt: number; canDelete: boolean;
 };
-export type SignupPayload = { kind: "individual" | "band"; playerId?: string; bandId?: string };
+export type SignupPayload = { kind: "individual" | "band"; programName: string; playerId?: string; bandId?: string };

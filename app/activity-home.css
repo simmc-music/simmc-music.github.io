@@ -1,0 +1,33 @@
+.activity-home { display: flex; flex-direction: column; gap: 28px; }
+.activity-home-summary { display: grid; grid-template-columns: minmax(220px, 35%) minmax(0, 1fr); overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.activity-home-image { align-self: start; width: 100%; aspect-ratio: 1; }
+.activity-home-content { min-width: 0; padding: 30px 34px; }
+.activity-home-content h1 { margin: 12px 0 17px; color: #354e65; font-size: clamp(24px, 3vw, 32px); font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.activity-home-location { display: flex; align-items: flex-start; gap: 9px; color: #7b91a4; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.activity-home-location > svg { flex-shrink: 0; margin-top: 3px; }
+.activity-home-venue { display: block; margin-top: 4px; color: #9aaaba; font-size: 12px; }
+.activity-home-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 25px; }
+.activity-programs-panel { min-width: 0; padding: 26px 30px 12px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.activity-programs-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.activity-programs-heading h2 { display: flex; align-items: center; gap: 10px; color: #47637d; font-size: 19px; font-weight: 600; line-height: 1.5; }
+.activity-programs-heading > .btn { flex-shrink: 0; }
+.activity-programs-panel .activity-signups li { min-height: 90px; padding: 20px 4px; }
+.activity-programs-panel .activity-signups li:last-child { border-bottom: 0; }
+.activity-programs-panel .signup-person strong { color: #465f76; font-size: 16px; line-height: 1.6; }
+.signup-person > .signup-performer { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 7px; color: #899eaf; line-height: 1.6; overflow-wrap: anywhere; }
+.signup-performer > svg { flex-shrink: 0; }
+.signup-kind-label { margin-left: 2px; padding: 0 6px; border-radius: 4px; background: #f2f6f9; color: #8fa2b3; font-size: 11px; }
+@media (max-width: 720px) {
+  .activity-home-summary { grid-template-columns: 1fr; }
+  .activity-home-image { aspect-ratio: 16 / 9; }
+  .activity-home-content { padding: 24px; }
+  .activity-programs-panel { padding: 23px 22px 10px; }
+}
+@media (max-width: 420px) {
+  .activity-home { gap: 20px; }
+  .activity-home-content { padding: 20px; }
+  .activity-programs-panel { padding: 20px 16px 8px; }
+  .activity-programs-heading h2 { gap: 6px; font-size: 17px; }
+  .activity-programs-heading > .btn { padding-right: 11px; padding-left: 11px; font-size: 12px; }
+  .activity-programs-panel .activity-signups li { gap: 10px; }
+}
