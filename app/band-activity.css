@@ -1,0 +1,51 @@
+.band-card, .activity-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.band-card { padding: 23px; }
+.band-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
+.band-icon { display: grid; place-items: center; width: 48px; height: 48px; color: #507ca5; background: #eff5fc; border-radius: 14px; }
+.band-card h2, .activity-card h2 { color: #354e65; font-size: 20px; line-height: 1.5; overflow-wrap: anywhere; }
+.band-captain { display: flex; align-items: baseline; gap: 12px; margin-top: 14px; font-size: 13px; }
+.band-captain > span, .band-members-heading { color: #8799aa; }
+.band-captain strong { min-width: 0; color: #5d748c; font-weight: 500; overflow-wrap: anywhere; }
+.band-members-heading { display: flex; justify-content: space-between; margin-top: 22px; padding-top: 17px; border-top: 1px solid #edf1f5; font-size: 12px; }
+.band-members { display: flex; flex-wrap: wrap; align-content: start; gap: 7px; max-height: 184px; overflow-y: auto; list-style: none; margin: 12px 0 0; padding: 0; }
+.band-members li { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 5px; padding: 5px 8px; border-radius: 7px; background: #f5f8fb; color: #61788e; font-size: 12px; overflow-wrap: anywhere; }
+.band-members small { color: #9da8b1; font-size: 10px; }
+.band-no-members { margin-top: 12px; color: #a3afba; font-size: 13px; }
+.band-card-actions { display: flex; justify-content: flex-end; margin-top: auto; padding-top: 22px; }
+.activity-card-open { display: flex; flex: 1; flex-direction: column; gap: 14px; width: 100%; padding: 23px; color: inherit; background: transparent; text-align: left; }
+.activity-card-open:hover { background: #fcfdff; }
+.activity-card-open:focus-visible { outline-offset: -3px; border-radius: 14px; }
+.activity-date, .activity-location { display: inline-flex; align-items: center; gap: 8px; color: #7b91a4; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.activity-date { color: #ac873b; }
+.activity-intro-preview { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 3; -webkit-box-orient: vertical; color: #91a0af; font-size: 13px; line-height: 1.8; }
+.activity-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: auto; padding-top: 12px; width: 100%; color: #6586a2; font-size: 12px; }
+.activity-card-bottom > span { display: inline-flex; align-items: center; gap: 7px; }
+.activity-card-actions { display: flex; justify-content: flex-end; gap: 7px; padding: 0 23px 19px; }
+.community-form .field { width: 100%; }
+.activity-detail-heading h3 { margin: 12px 0; color: #354d64; font-size: 25px; line-height: 1.5; overflow-wrap: anywhere; }
+.activity-description { margin: 20px 0 0; color: #70869a; font-size: 14px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.activity-signup-form { padding: 20px; margin-top: 25px; border: 1px solid #e5edf4; background: #f9fbfd; border-radius: 12px; }
+.activity-signup-form h4, .signup-list-heading h4 { color: #536e86; font-size: 16px; font-weight: 600; }
+.signup-kind { display: flex; align-items: center; gap: 25px; margin: 16px 0; }
+.signup-kind label { display: inline-flex; align-items: center; gap: 7px; color: #6f859b; font-size: 13px; cursor: pointer; }
+.signup-kind input { accent-color: var(--primary); }
+.signup-kind label:has(input:disabled) { color: #a7b3bd; cursor: default; }
+.signup-input-row { display: flex; align-items: flex-end; gap: 12px; }
+.signup-input-row .field { flex: 1; }
+.signup-input-row .btn { min-height: 44px; }
+.signup-list-heading { margin: 27px 0 14px; }
+.activity-signups { list-style: none; padding: 0; margin: 0; }
+.activity-signups li { display: flex; align-items: center; gap: 15px; min-height: 74px; padding: 14px 4px; border-bottom: 1px solid #edf2f6; }
+.signup-order { width: 28px; color: #9bafbf; font-size: 13px; font-variant-numeric: tabular-nums; }
+.signup-person { flex: 1; min-width: 0; }
+.signup-person strong { display: block; color: #546f87; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.signup-person > span { display: block; margin-top: 5px; color: #a0afbd; font-size: 12px; }
+@media (max-width: 600px) {
+  .band-card, .activity-card-open { padding: 20px; }
+  .activity-card-actions { padding: 0 20px 18px; }
+  .activity-detail-heading h3 { font-size: 22px; }
+  .activity-signup-form { padding: 16px; }
+  .signup-input-row { flex-wrap: wrap; }
+  .signup-input-row .field { flex-basis: 100%; }
+  .signup-input-row .btn { margin-left: auto; }
+}

@@ -32,3 +32,9 @@
   .filter-group .select { flex: 1 1 calc((100% - 9px) / 2); }
   .filter-group > .btn { margin-left: auto; }
 }
+
+.song-card-footer { justify-content: flex-end; }
+.my-community { margin: 0 0 26px; padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: white; }
+.my-band-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.my-band-list small { color: var(--muted); }
+.header-account .user-button { padding: 5px; border-radius: 50%; }

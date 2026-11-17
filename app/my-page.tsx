@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, CalendarDays, Heart, MapPin, Music2, Pencil, Store, Trash2, UserRound, Waves } from "lucide-react";
 import { songArtist } from "../lib/song-display";
 import { CoverImage } from "./cover-image";
@@ -11,6 +11,7 @@ import "./my-page.css";
 
 type MyPageProps = {
   data: Data;
+  communityContent?: ReactNode;
   onProfile: () => void;
   onLogin: () => void;
   onSong: (song: Song) => void;
@@ -29,7 +30,7 @@ type MyPageProps = {
 
 type Collection = "songs" | "favorites" | "shops" | "venues";
 
-export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteSong, onShop, onEditShop, onDeleteShop, onVenue, onEditVenue, onDeleteVenue, onFavorite, favoriteBusyId, busy = false }: MyPageProps) {
+export function MyPage({ data, communityContent, onProfile, onLogin, onSong, onEditSong, onDeleteSong, onShop, onEditShop, onDeleteShop, onVenue, onEditVenue, onDeleteVenue, onFavorite, favoriteBusyId, busy = false }: MyPageProps) {
   const [collection, setCollection] = useState<Collection>("songs");
   const user = data.user;
   const ownSongs = data.songs.filter(song => samePlayer(song.owner,user?.gameId)).sort(compareSongs);
@@ -72,6 +73,7 @@ export function MyPage({ data, onProfile, onLogin, onSong, onEditSong, onDeleteS
       <button className="btn secondary" onClick={onProfile}><Pencil size={15} />个人主页</button>
     </div>
 
+    {communityContent}
     <nav className="mine-tabs" aria-label="我的内容">
       {tabs.map(({ id, label, count, icon: Icon }) => <button key={id} className={collection === id ? "active" : ""} aria-pressed={collection === id} onClick={() => setCollection(id)}>
         <Icon size={17} /><span>{label}</span><span className="mine-tab-count">{count}</span>

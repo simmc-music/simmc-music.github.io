@@ -4,11 +4,14 @@ import { CalendarDays, Camera, ChevronLeft, ChevronRight, Clock3, MapPin, Plus, 
 import { coords, samePlayer, dateKey, today, todayKey, type Show, type User, type Venue } from "./ui";
 import { CoverImage } from "./cover-image";
 import { Pagination, usePagination } from "./pagination";
+import type { Activity } from "./community-types";
 import "./directory-images.css";
+import "./calendar-activities.css";
 
 type VenueHomeProps = {
   venue: Venue;
   events: Show[];
+  activities?: Activity[];
   user: User | null;
   selectedDate: string;
   month: Date;
@@ -18,10 +21,14 @@ type VenueHomeProps = {
   onDeleteVenue: () => void;
   onDeleteEvent: (show: Show) => void;
   onEditImage: () => void;
+  onOpenActivity?: (activity: Activity) => void;
+  onAddActivity?: (date: string) => void;
 };
 
-export function VenueHome({ venue, events, user, selectedDate, month, onDateChange, onMonthChange, onAddEvent, onDeleteVenue, onDeleteEvent, onEditImage }: VenueHomeProps) {
+export function VenueHome({ venue, events, activities = [], user, selectedDate, month, onDateChange, onMonthChange, onAddEvent, onDeleteVenue, onDeleteEvent, onEditImage, onOpenActivity, onAddActivity }: VenueHomeProps) {
   const canManage = !!user && (user.role === "admin" || samePlayer(user.gameId,venue.owner));
+  const activityByDate = new Map(activities.filter(activity => activity.livehouseId === venue.id).map(activity => [activity.date, activity]));
+  const selectedActivity = activityByDate.get(selectedDate);
   const venueEvents = events.filter((event) => event.livehouseId === venue.id);
   const dailyEvents = venueEvents.filter((event) => event.date === selectedDate).sort((a, b) => a.hour - b.hour || Number(a.id) - Number(b.id));
   const pagination = usePagination(dailyEvents, `${venue.id}:${selectedDate}`);
@@ -33,8 +40,11 @@ export function VenueHome({ venue, events, user, selectedDate, month, onDateChan
   const dateLabel = new Date(`${selectedDate}T12:00:00`).toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" });
 
   function selectDay(day: Date) {
-    onDateChange(dateKey(day));
+    const key = dateKey(day);
+    onDateChange(key);
     if (day.getMonth() !== month.getMonth() || day.getFullYear() !== month.getFullYear()) onMonthChange(new Date(day.getFullYear(), day.getMonth(), 1));
+    const activity = activityByDate.get(key);
+    if (activity) onOpenActivity?.(activity);
   }
 
   return <div className="venue-home">
@@ -57,9 +67,9 @@ export function VenueHome({ venue, events, user, selectedDate, month, onDateChan
 
       <section className="calendar-panel" aria-labelledby="venue-calendar-title">
         <div className="calendar-header">
-          <div><h2 className="section-title" id="venue-calendar-title">演出日历</h2><p className="calendar-month">{month.getFullYear()} 年 {month.getMonth() + 1} 月</p></div>
+          <div><h2 className="section-title" id="venue-calendar-title">日历</h2><p className="calendar-month">{month.getFullYear()} 年 {month.getMonth() + 1} 月</p></div>
           <div className="calendar-controls">
-            <button className="btn ghost small" onClick={() => { onMonthChange(today()); onDateChange(todayKey()); }}>今天</button>
+            <button className="btn ghost small" onClick={() => selectDay(today())}>今天</button>
             <button className="icon-btn" aria-label="上个月" onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() - 1, 1))}><ChevronLeft size={18} /></button>
             <button className="icon-btn" aria-label="下个月" onClick={() => onMonthChange(new Date(month.getFullYear(), month.getMonth() + 1, 1))}><ChevronRight size={18} /></button>
           </div>
@@ -67,24 +77,27 @@ export function VenueHome({ venue, events, user, selectedDate, month, onDateChan
         <div className="calendar-grid">
           {["一", "二", "三", "四", "五", "六", "日"].map((weekday) => <div className="weekday" key={weekday}>周{weekday}</div>)}
           {days.map((day) => {
-            const key = dateKey(day), count = dayCounts.get(key) || 0;
-            return <button key={key} className={`calendar-day ${day.getMonth() !== month.getMonth() ? "outside" : ""} ${key === todayKey() ? "today" : ""} ${key === selectedDate ? "selected" : ""} ${count ? "has-events" : ""}`} onClick={() => selectDay(day)} aria-label={`${key}，${count ? `${count} 个节目` : "暂无节目"}`} aria-pressed={key === selectedDate}>
-              <span className="day-number">{day.getDate()}</span>{count > 0 && <span className="day-count">{count} 节目</span>}
+            const key = dateKey(day), count = dayCounts.get(key) || 0, activity = activityByDate.get(key);
+            return <button key={key} className={`calendar-day ${day.getMonth() !== month.getMonth() ? "outside" : ""} ${key === todayKey() ? "today" : ""} ${key === selectedDate ? "selected" : ""} ${activity ? "has-activity" : count ? "has-events" : ""}`} onClick={() => selectDay(day)} aria-label={`${key}，${activity ? `活动：${activity.name}，${activity.signupCount} 项报名` : count ? `${count} 个节目` : "暂无节目"}`} aria-pressed={key === selectedDate} title={activity?.name}>
+              <span className="day-number">{day.getDate()}</span>{activity ? <span className="day-activity-name">{activity.name}</span> : count > 0 && <span className="day-count">{count} 节目</span>}
             </button>;
           })}
         </div>
-        <div className="calendar-legend"><span className="legend-blue" />已有演出<span className="legend-outline" />今天<span className="calendar-timezone">北京时间（UTC+8）</span></div>
+        <div className="calendar-legend"><span className="legend-blue" />演出<span className="legend-gold" />活动<span className="legend-outline" />今天<span className="calendar-timezone">北京时间（UTC+8）</span></div>
       </section>
     </div>
 
-    <section className="agenda-panel" aria-labelledby="venue-agenda-title">
+    {selectedActivity ? <section className="venue-activity-panel" aria-labelledby="venue-activity-title">
+      <div><p className="venue-activity-date"><CalendarDays size={15} />{dateLabel}</p><h2 id="venue-activity-title">{selectedActivity.name}</h2><span className="venue-activity-count">{selectedActivity.signupCount} 项报名</span></div>
+      <button className="btn primary" onClick={() => onOpenActivity?.(selectedActivity)}>查看报名</button>
+    </section> : <section className="agenda-panel" aria-labelledby="venue-agenda-title">
       <div ref={pagination.anchorRef} className="pagination-anchor" />
-      <div className="agenda-heading"><div><h2 className="section-title" id="venue-agenda-title">演出排班</h2><p className="agenda-date"><CalendarDays size={14} />{dateLabel}<span>·</span>{dailyEvents.length} 个节目</p></div><button className="btn primary" onClick={onAddEvent}><Plus size={17} />添加演出</button></div>
+      <div className="agenda-heading"><div><h2 className="section-title" id="venue-agenda-title">演出排班</h2><p className="agenda-date"><CalendarDays size={14} />{dateLabel}<span>·</span>{dailyEvents.length} 个节目</p></div><div className="venue-agenda-actions">{user?.role === "admin" && onAddActivity && <button className="btn secondary" onClick={() => onAddActivity(selectedDate)}><CalendarDays size={17} />添加活动</button>}<button className="btn primary" onClick={onAddEvent}><Plus size={17} />添加演出</button></div></div>
       {!dailyEvents.length ? <div className="agenda-empty"><CalendarDays size={26} strokeWidth={1.3} /><span>暂无演出</span></div> : Array.from(new Set(pagination.items.map((event) => event.hour))).map((hour) => <div className="time-group" key={hour}>
         <div className="time-label"><Clock3 size={16} /><strong>{String(hour).padStart(2, "0")}:00</strong></div>
         {pagination.items.filter((event) => event.hour === hour).map((show) => <article className="event-card" key={show.id}><span className="event-order">{String(dailyEvents.filter(event => event.hour === hour).findIndex(event => event.id === show.id) + 1).padStart(2, "0")}</span><div><h3 className="event-title">{show.title}</h3><span className="event-player"><UserRound size={14} />{show.playerId}</span></div>{show.canDelete && <button className="icon-btn danger event-actions" aria-label={`删除节目 ${show.title}`} onClick={() => onDeleteEvent(show)}><Trash2 size={16} /></button>}</article>)}
       </div>)}
       <Pagination {...pagination} label="演出排班分页" />
-    </section>
+    </section>}
   </div>;
 }

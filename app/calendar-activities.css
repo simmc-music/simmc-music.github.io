@@ -1,0 +1,30 @@
+.venue-home .calendar-grid .calendar-day.has-activity {
+  color: #886211;
+  border-color: #f3dc9d;
+  background: #fff4d5;
+}
+.venue-home .calendar-grid .calendar-day.has-activity:hover { background: #ffebaf; }
+.venue-home .calendar-grid .calendar-day.has-activity.selected {
+  color: #5e4307;
+  border-color: #dca82d;
+  background: #f7d67b;
+  box-shadow: 0 3px 7px #bd8b1820;
+}
+.venue-home .calendar-grid .calendar-day.has-activity.today { outline: 1px solid #b38110; outline-offset: -4px; }
+.day-activity-name { display: block; width: 100%; padding: 0 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 9px; line-height: 1.5; }
+.legend-gold { display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #f2ce6c; margin-left: 9px; }
+.venue-agenda-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.venue-activity-panel { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 25px 28px; border: 1px solid #efda9e; border-radius: 16px; background: #fffaf0; }
+.venue-activity-panel > div { min-width: 0; }
+.venue-activity-date { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; color: #977536; font-size: 13px; }
+.venue-activity-panel h2 { color: #604b24; font-size: 20px; font-weight: 600; overflow-wrap: anywhere; }
+.venue-activity-count { display: block; margin-top: 7px; color: #977536; font-size: 13px; }
+.venue-activity-panel > .btn { flex-shrink: 0; }
+@media (max-width: 600px) {
+  .venue-agenda-actions { justify-content: flex-start; }
+  .venue-activity-panel { padding: 20px 17px; border-radius: 13px; gap: 14px; }
+  .venue-activity-panel h2 { font-size: 18px; }
+}
+@media (max-width: 380px) {
+  .venue-activity-panel { align-items: flex-start; flex-direction: column; }
+}

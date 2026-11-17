@@ -43,7 +43,7 @@ export function ShopDetail({ shop, songs, onSong }: ShopDetailProps) {
             <div className="song-meta"><span>{song.bars ? `${song.bars} 小节` : ""}</span><strong className="price">{amount(song)}{!song.customPrice && <small> 云币</small>}</strong></div>
           </div>
         </button>
-        <div className="song-card-footer"><span className="song-owner"><UserRound size={13} />{song.owner}</span></div>
+
       </article>)}
     </div> : <div className="empty-state">这家商店暂无乐曲</div>}
     <Pagination {...pagination} label="商店乐曲分页" />

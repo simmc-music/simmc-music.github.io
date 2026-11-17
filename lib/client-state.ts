@@ -1,3 +1,4 @@
+import { applyCommunityMutation, communityPermissions } from "./community-state";
 const samePlayer=(a:string|null|undefined,b:string|null|undefined)=>!!a&&!!b&&a.trim().toLowerCase()===b.trim().toLowerCase();
 import type { Artist, Data, Shop, Show, Song, User, Venue } from "../app/ui";
 
@@ -26,12 +27,13 @@ function recountArtists(data: Data): Data {
 export function applyConfirmedMutation(data: Data, path: string, method: string, response: Record<string, unknown>): Data {
   const parts = path.split("/").filter(Boolean);
   const kind = parts[1], id = parts[2];
+  const community=applyCommunityMutation(data,path,method,response);if(community)return community;
   if (kind === "auth") {
     const user = response.user as User | null;
     // Ownership of a previous player's events is not exposed in state. Hide unproven
     // permissions until the authoritative refresh rather than reusing the old session's.
     const ownedVenues = new Set(data.livehouses.filter(venue => samePlayer(venue.owner,user?.gameId)).map(venue => venue.id));
-    return { ...data, user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||samePlayer(song.owner,user.gameId))})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || samePlayer(user.gameId,event.playerId) || ownedVenues.has(event.livehouseId)) })),
+    return { ...data, ...communityPermissions(data,user), user, songs:data.songs.map(song=>({...song,isFavorited:false,canEdit:!!user&&(user.role==='admin'||samePlayer(song.owner,user.gameId))})), events: data.events.map(event => ({ ...event, canDelete: !!user && (user.role === "admin" || samePlayer(user.gameId,event.playerId) || ownedVenues.has(event.livehouseId)) })),
       shops: data.shops.map(shop => ({ ...shop, canManage: !!user && (user.role === "admin" || shop.ownerId === user.id || shop.creatorId === user.id) })) };
   }
   if (kind === "profile") return recountArtists({ ...data, user: response.user as User });
@@ -45,7 +47,7 @@ export function applyConfirmedMutation(data: Data, path: string, method: string,
     return {...data,songs:data.songs.map(song=>song.id===id?{...song,favoriteCount:Number(response.favoriteCount),isFavorited:response.isFavorited===true}:song)};
   }
   if (method === "DELETE") {
-    if (kind === "livehouses") return { ...data, livehouses: data.livehouses.filter(venue => venue.id !== id), events: data.events.filter(event => event.livehouseId !== id) };
+    if (kind === "livehouses") return { ...data, livehouses: data.livehouses.filter(venue => venue.id !== id), events: data.events.filter(event => event.livehouseId !== id), activities:(data.activities??[]).map(activity=>activity.livehouseId===id?{...activity,livehouseId:null}:activity) };
     if (kind === "events") return { ...data, events: data.events.filter(event => event.id !== id) };
     if (kind === "songs") return recountArtists({ ...data, songs: data.songs.filter(song => song.id !== id) });
     if (kind === "shops") return { ...data, shops: data.shops.filter(shop => shop.id !== id), songs: data.songs.map(song => ({ ...song, shopIds: song.shopIds.filter(shopId => shopId !== id) })) };
