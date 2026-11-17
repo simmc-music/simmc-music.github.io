@@ -56,7 +56,7 @@ export function MyPage({ data, communityContent, onProfile, onLogin, onSong, onE
     { id: "songs" as const, label: "我的音乐", count: ownSongs.length, icon: Music2 },
     { id: "favorites" as const, label: "红心收藏", count: favorites.length, icon: Heart },
     { id: "shops" as const, label: "我的商店", count: ownShops.length, icon: Store },
-    { id: "venues" as const, label: "我的 Livehouse", count: ownVenues.length, icon: CalendarDays },
+    { id: "venues" as const, label: "我的 演出场地", count: ownVenues.length, icon: CalendarDays },
   ];
   const selected = tabs.find(tab => tab.id === collection)!;
   const songs = collection === "favorites" ? favoritesPage.items : songsPage.items;
@@ -141,12 +141,12 @@ export function MyPage({ data, communityContent, onProfile, onLogin, onSong, onE
           <div className="mine-card-actions mine-place-actions">
             <button className="text-link" onClick={() => onVenue(venue)}>查看排班<ArrowRight size={14} /></button>
             {!venue.protected && <div className="mine-manage-actions">
-              <button className="icon-btn" onClick={() => onEditVenue(venue)} aria-label={`编辑 Livehouse ${venue.name}`} title="编辑 Livehouse"><Pencil size={15} /></button>
-              <button className="icon-btn danger" onClick={() => onDeleteVenue(venue)} aria-label={`删除 Livehouse ${venue.name}`} title="删除 Livehouse"><Trash2 size={15} /></button>
+              <button className="icon-btn" onClick={() => onEditVenue(venue)} aria-label={`编辑 演出场地 ${venue.name}`} title="编辑 演出场地"><Pencil size={15} /></button>
+              <button className="icon-btn danger" onClick={() => onDeleteVenue(venue)} aria-label={`删除 演出场地 ${venue.name}`} title="删除 演出场地"><Trash2 size={15} /></button>
             </div>}
           </div>
         </article>)}
-      </div> : <div className="empty-state">暂无 Livehouse</div>)}
+      </div> : <div className="empty-state">暂无 演出场地</div>)}
       <Pagination {...pagination} label={`${selected.label}分页`} />
     </section>
   </section>;

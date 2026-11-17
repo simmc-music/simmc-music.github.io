@@ -9,7 +9,7 @@
 .header-inner { gap: 24px; }
 .site-nav button { padding-inline: 12px; }
 @media (max-width: 1000px) { .header-inner { gap: 16px; } .site-nav button { padding-inline: 9px; } }
-@media (max-width: 760px) { .header-inner { gap: 0; } .site-nav { grid-template-columns: repeat(5,minmax(0,1fr)); } .site-nav button { padding-inline: 3px; } }
+@media (max-width: 760px) { .header-inner { gap: 0; } .site-nav { grid-template-columns: minmax(0,1.6fr) repeat(5,minmax(0,1fr)); } .site-nav button { padding-inline: 3px; } }
 @media (max-width: 560px) { .site-nav svg { display: none; } .song-card-footer { padding: 0 13px 12px; } }
 
 .song-instruments, .sale-coordinates { min-width: 0; border: 0; padding: 0; margin: 18px 0; }

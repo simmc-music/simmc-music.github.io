@@ -46,14 +46,15 @@ export type ActivityFormProps = {
 };
 
 export function ActivityForm({ activity, user, venues, initialDate, initialLivehouseId, onSubmit, busy = false, error = "" }: ActivityFormProps) {
-  const isAdmin = user.role === "admin";
-  const linked = activity?.livehouseId || initialLivehouseId || "";
-  const dateLocked = !!linked && !isAdmin;
+  const availableVenues = venues.filter(venue => user.role === "admin" || samePlayer(venue.owner, user.gameId));
+  const linked = activity?.livehouseId || (availableVenues.some(venue => venue.id === initialLivehouseId) ? initialLivehouseId : "") || "";
+  const dateLocked = !!activity?.livehouseId && user.role !== "admin" && !availableVenues.some(venue => venue.id === activity.livehouseId);
+  const lockedVenue = dateLocked ? venues.find(venue => venue.id === linked) : undefined;
   return <form onSubmit={onSubmit} className="community-form">
     <Field label="活动名称"><input className="input" name="name" required maxLength={100} defaultValue={activity?.name || ""} disabled={busy} /></Field>
-    <Field label="日期" hint={dateLocked ? "Livehouse 活动日期由管理员设置。" : undefined}><input className="input" name="date" type="date" required defaultValue={activity?.date || initialDate || todayKey()} readOnly={dateLocked} disabled={busy} /></Field>
+    <Field label="日期" hint={dateLocked ? "场地与日期由该场地负责人或管理员调整。" : undefined}>{dateLocked ? <input className="input" name="date" type="date" value={activity?.date || ""} readOnly disabled={busy} /> : <input className="input" name="date" type="date" required defaultValue={activity?.date || initialDate || todayKey()} disabled={busy} />}</Field>
     <Field label="地点"><input className="input" name="location" required maxLength={200} defaultValue={activity?.location || venues.find(venue => venue.id === linked)?.name || ""} disabled={busy} placeholder="场地名称或坐标" /></Field>
-    {isAdmin && <Field label="安排到 Livehouse"><select className="select" name="livehouseId" defaultValue={linked} disabled={busy}><option value="">不关联 Livehouse</option>{venues.map(venue => <option key={venue.id} value={venue.id}>{venue.name}</option>)}</select></Field>}
+    <Field label="演出场地"><select className="select" name={dateLocked ? undefined : "livehouseId"} defaultValue={linked} disabled={busy || dateLocked}><option value="">不关联演出场地</option>{dateLocked && <option value={linked}>{lockedVenue?.name || "原关联场地"}</option>}{availableVenues.map(venue => <option key={venue.id} value={venue.id}>{venue.name}</option>)}</select>{dateLocked && <input type="hidden" name="livehouseId" value={linked} />}</Field>
     <Field label="介绍"><textarea className="textarea" name="description" required defaultValue={activity?.description || ""} rows={5} maxLength={5000} disabled={busy} /></Field>
     {error && <div className="error-message" role="alert"><Info size={16} />{error}</div>}
     <div className="modal-footer"><button className="btn primary" disabled={busy}>{busy ? "正在保存…" : activity ? "保存修改" : "创建活动"}</button></div>
