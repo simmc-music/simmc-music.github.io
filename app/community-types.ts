@@ -12,7 +12,7 @@ export type Activity = {
 export type ActivitySignup = {
   id: string; activityId: string; kind: "individual" | "band";
   playerId: string; bandId: string | null; displayName: string;
-  programName?: string;
+  programName?: string; sortOrder?: number; canEdit?: boolean;
   createdAt: number; canDelete: boolean;
 };
 export type SignupPayload = { kind: "individual" | "band"; programName: string; playerId?: string; bandId?: string };

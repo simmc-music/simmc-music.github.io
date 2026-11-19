@@ -5,7 +5,7 @@ const upsert = <T extends {id:string}>(items:T[],item:T) => items.some(x=>x.id==
 export function communityPermissions(data:Data,user:User|null) {
   const bands=(data.bands??[]).map(b=>({...b,isMember:!!user&&(b.captainId===user.id||b.members.some(m=>m.id===user.id)),canManage:!!user&&(user.role==='admin'||b.captainId===user.id)}));
   const activities=(data.activities??[]).map(a=>({...a,canManage:!!user&&(user.role==='admin'||a.ownerId===user.id)}));
-  const activitySignups=(data.activitySignups??[]).map(s=>({...s,canDelete:!!user&&(user.role==='admin'||activities.some(a=>a.id===s.activityId&&a.ownerId===user.id)||(s.kind==='individual'&&s.playerId.toLowerCase()===user.gameId.toLowerCase()))}));
+  const activitySignups=(data.activitySignups??[]).map(s=>{const own=!!user&&((s.kind==='individual'&&s.playerId.toLowerCase()===user.gameId.toLowerCase())||(s.kind==='band'&&bands.some(b=>b.id===s.bandId&&b.isMember)));return {...s,canEdit:!!user&&(user.role==='admin'||own),canDelete:!!user&&(user.role==='admin'||own||activities.some(a=>a.id===s.activityId&&a.ownerId===user.id))};});
   return {bands,activities,activitySignups};
 }
 
@@ -16,6 +16,10 @@ export function applyCommunityMutation(data:Data,path:string,method:string,respo
     const signup={...response,id:String(response.id)} as ActivitySignup;
     const activitySignups=upsert(data.activitySignups??[],signup);
     return {...data,activitySignups,activities:(data.activities??[]).map(a=>a.id===signup.activityId?{...a,signupCount:activitySignups.filter(s=>s.activityId===a.id).length}:a)};
+  }
+  if(kind==='activity-signups'&&method==='PATCH') {
+    const items=response.activitySignups as ActivitySignup[];
+    return {...data,activitySignups:items.reduce((all,item)=>upsert(all,item),data.activitySignups??[])};
   }
   if(kind==='activity-signups'&&method==='DELETE') {
     const activitySignups=(data.activitySignups??[]).filter(s=>s.id!==id);

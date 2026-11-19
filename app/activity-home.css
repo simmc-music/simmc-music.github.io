@@ -31,3 +31,6 @@
   .activity-programs-heading > .btn { padding-right: 11px; padding-left: 11px; font-size: 12px; }
   .activity-programs-panel .activity-signups li { gap: 10px; }
 }
+
+.program-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:6px; }
+@media(max-width:600px){ .activity-programs-panel .activity-signups li {flex-wrap:wrap;} .program-actions {width:100%;} }

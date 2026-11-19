@@ -108,12 +108,12 @@ export function ActivitySignupForm({ activity, signups, user, bands, initialKind
 export type ActivityHomeProps = {
   activity: Activity; signups: ActivitySignup[]; user: User | null; busy?: boolean; venueName?: string;
   onSignup: () => void; onEdit: (activity: Activity) => void; onDelete: (activity: Activity) => void;
-  onDeleteSignup: (signup: ActivitySignup) => void;
+  onDeleteSignup: (signup: ActivitySignup) => void; onEditSignup: (signup:ActivitySignup)=>void; onMoveSignup:(signup:ActivitySignup,move:"up"|"down")=>void;
 };
 
-export function ActivityHome({ activity, signups, user, busy = false, venueName, onSignup, onEdit, onDelete, onDeleteSignup }: ActivityHomeProps) {
+export function ActivityHome({ activity, signups, user, busy = false, venueName, onSignup, onEdit, onDelete, onDeleteSignup, onEditSignup, onMoveSignup }: ActivityHomeProps) {
   const entries = signups.filter(signup => signup.activityId === activity.id)
-    .sort((a, b) => Number(a.id) - Number(b.id) || a.createdAt - b.createdAt);
+    .sort((a, b) => (a.sortOrder??Number(a.id))-(b.sortOrder??Number(b.id)) || Number(a.id)-Number(b.id));
   const pagination = usePagination(entries, activity.id);
   return <div className="activity-home">
     <section className="activity-home-summary" aria-labelledby="activity-home-title">
@@ -132,7 +132,8 @@ export function ActivityHome({ activity, signups, user, busy = false, venueName,
       {entries.length ? <ol className="activity-signups" start={(pagination.page - 1) * PAGE_SIZE + 1}>{pagination.items.map((signup, index) => <li key={signup.id}>
         <span className="signup-order" aria-hidden="true">{String((pagination.page - 1) * PAGE_SIZE + index + 1).padStart(2, "0")}</span>
         <div className="signup-person"><strong>{signup.programName?.trim() || "未填写节目名"}</strong><span className="signup-performer">{signup.kind === "band" ? <UsersRound size={14} /> : <UserRound size={14} />}<span>{signup.displayName || signup.playerId}</span><span className="signup-kind-label">{signup.kind === "band" ? "乐队" : "个人"}</span></span></div>
-        {signup.canDelete && <button type="button" className="icon-btn danger" disabled={busy} aria-label={`取消 ${signup.displayName || signup.playerId} 的报名`} onClick={() => onDeleteSignup(signup)}><Trash2 size={16} /></button>}
+        <div className="program-actions">{user?.role==="admin"&&<><button type="button" className="btn secondary small" disabled={busy||entries[0]?.id===signup.id} onClick={()=>onMoveSignup(signup,"up")}>上移</button><button type="button" className="btn secondary small" disabled={busy||entries.at(-1)?.id===signup.id} onClick={()=>onMoveSignup(signup,"down")}>下移</button></>}{signup.canEdit&&<button type="button" className="btn secondary small" disabled={busy} onClick={()=>onEditSignup(signup)}>编辑</button>}
+        {signup.canDelete && <button type="button" className="icon-btn danger" disabled={busy} aria-label={`取消 ${signup.displayName || signup.playerId} 的报名`} onClick={() => onDeleteSignup(signup)}><Trash2 size={16} /></button>}</div>
       </li>)}</ol> : <div className="empty-state compact">暂无演出节目</div>}
       <Pagination {...pagination} label="演出节目分页" />
     </section>
